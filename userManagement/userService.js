@@ -11,6 +11,7 @@ const registerUser = async (req, res) => {
         password: password
     }
     try {
+        
         const addedUser = await db.collection('users').add(newUser)
 
         // Get the data of the newly created document
@@ -34,8 +35,19 @@ const loginUser = (req, res) => {
     res.send('you want to login')
 } 
 
+const checkEmailNotInUse = async (email) => {
+    const userRef = db.collection('users')
+    const querySnapshot = await userRef.where('email', '==', email).limit(1).get()
+
+
+    if(!querySnapshot.empty) {
+        return Promise.reject('Email already in use')
+    }
+}
+
 module.exports = {
     getAllUsers,
     registerUser,
-    loginUser
+    loginUser,
+    checkEmailNotInUse
 }
